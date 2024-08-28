@@ -1,42 +1,62 @@
+import json, random
 from time import time
 
-# Sample text for the typing test
-sample_text = "In the heart of the bustling city, where the streets were alive with the hum of activity, there stood an old bookstore."
-text = []
+def main(): 
+    with open('quotes.json', 'r') as file:
+        data = json.load(file)
+    quotes_no = len(data)
+    again = 'y'
 
-print('Press Enter to start typing and to break a new line')
-print('Press Enter twice to finish typing')
-input('---------------------------------------------------')
+    while again == 'y': 
+        random_no = random.randint(0, quotes_no - 1)
+        q = data[random_no]
+        sample_text = f'"{q["quote"]}" by {q["author"]}'
 
-start = time()
+        text = []
 
-while True:
-    line = input() 
-    if not line:
-        break
-    text.append(line)
+        print('Press Enter to start typing and to break a new line')
+        print('Press Enter twice to finish typing\n')
+        print(sample_text)
+        input('---------------------------------------------------')
 
-end = time()
+        start = time()
 
-print('---------------------------------------------------')
+        while True:
+            line = input() 
+            if not line:
+                break
+            text.append(line)
 
-elapsed_time = round((end - start), 2)
+        end = time()
 
-# Join the lines of text into a single string
-user_input = '\n'.join(text)
+        print('---------------------------------------------------')
 
-# Calculate character counts
-chars_count = sum(len(item) for item in text)
-word_count = chars_count / 5
+        elapsed_time = round((end - start), 2)
 
-# Calculate accuracy
-correct_chars = sum(1 for i, char in enumerate(sample_text) if i < len(user_input) and char == user_input[i])
-accuracy = (correct_chars / len(sample_text)) * 100 if sample_text else 0
-WPM = round(word_count/ (elapsed_time/ 60), 2)
+        # Join the lines of text into a single string
+        user_input = '\n'.join(text)
 
-# Print results
-print(f'Time taken: {elapsed_time} seconds')
-print(f'Characters typed: {chars_count}')
-print(f'Estimated words: {word_count:.2f}')
-print(f'Accuracy: {accuracy:.2f}%')
-print(f'Words per Minute: {WPM}')
+        # Calculate character counts
+        chars_count = sum(len(item) for item in text)
+        word_count = chars_count / 5
+
+        # Calculate accuracy
+        correct_chars = sum(1 for i, char in enumerate(sample_text) if i < len(user_input) and char == user_input[i])
+        accuracy = (correct_chars / len(sample_text)) * 100 if sample_text else 0
+        WPM = round(word_count/ (elapsed_time/ 60), 2)
+
+        # Print results
+        print(f'Time taken: {elapsed_time} seconds')
+        print(f'Characters typed: {chars_count}')
+        print(f'Estimated words: {word_count:.2f}')
+        print(f'Accuracy: {accuracy:.2f}%')
+        print(f'Words per Minute: {WPM}')
+
+        again = input("Would you like another quote? (y/n): ").strip().lower()
+        if again != 'y':
+            print("Thank you for playing, and see you next time!")
+            break 
+
+
+if __name__ == '__main__':
+    main()
