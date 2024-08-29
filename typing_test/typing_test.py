@@ -1,12 +1,16 @@
 import json
 import random
+import os 
 from time import time
 
 
 def load_quotes(filename):
     """Load quotes from a JSON file."""
+    base_dir = os.path.dirname(__file__) # special built-in variable in Python that contains the path of the script being executed
+    abs_file = os.path.join(base_dir, 'quotes.json')
+
     try:
-        with open(filename, 'r') as file:
+        with open(abs_file, 'r') as file:
             return json.load(file)
         
     except FileNotFoundError:
