@@ -1,18 +1,43 @@
-import json, random
+import json
+import random
 from time import time
 
-def main(): 
-    with open('quotes.json', 'r') as file:
-        data = json.load(file)
-    quotes_no = len(data)
+
+def load_quotes(filename):
+    """Load quotes from a JSON file."""
+    try:
+        with open(filename, 'r') as file:
+            return json.load(file)
+        
+    except FileNotFoundError:
+        print(f"Error: The file {filename} was not found.")
+        return []
+    
+    except json.JSONDecodeError:
+        print("Error: The file is not a valid JSON.")
+        return []
+
+
+def calculate_results(sample_text, user_input, elapsed_time):
+    """Calculate typing results."""
+    chars_count = sum(len(item) for item in user_input)
+    word_count = chars_count / 5
+    correct_chars = sum(1 for i, char in enumerate(sample_text) if i < len(user_input) and char == user_input[i])
+    accuracy = (correct_chars / len(sample_text)) * 100 if sample_text else 0
+    WPM = round(word_count / (elapsed_time / 60), 2)
+
+    return elapsed_time, chars_count, word_count, accuracy, WPM
+
+
+def main():
+    quotes = load_quotes('quotes.json')
+    if not quotes:
+        return  # Exit if no quotes are loaded
+
     again = 'y'
-
-    while again == 'y': 
-        random_no = random.randint(0, quotes_no - 1)
-        q = data[random_no]
-        sample_text = f'"{q["quote"]}" by {q["author"]}'
-
-        text = []
+    while again == 'y':
+        random_quote = random.choice(quotes)
+        sample_text = f'"{random_quote["quote"]}" by {random_quote["author"]}'
 
         print('Press Enter to start typing and to break a new line')
         print('Press Enter twice to finish typing\n')
@@ -20,42 +45,31 @@ def main():
         input('---------------------------------------------------')
 
         start = time()
+        text = []
 
         while True:
-            line = input() 
+            line = input()
             if not line:
                 break
             text.append(line)
 
         end = time()
+        elapsed_time = round((end - start), 2)
 
         print('---------------------------------------------------')
 
-        elapsed_time = round((end - start), 2)
-
-        # Join the lines of text into a single string
         user_input = '\n'.join(text)
+        results = calculate_results(sample_text, user_input, elapsed_time)
 
-        # Calculate character counts
-        chars_count = sum(len(item) for item in text)
-        word_count = chars_count / 5
-
-        # Calculate accuracy
-        correct_chars = sum(1 for i, char in enumerate(sample_text) if i < len(user_input) and char == user_input[i])
-        accuracy = (correct_chars / len(sample_text)) * 100 if sample_text else 0
-        WPM = round(word_count/ (elapsed_time/ 60), 2)
-
-        # Print results
-        print(f'Time taken: {elapsed_time} seconds')
-        print(f'Characters typed: {chars_count}')
-        print(f'Estimated words: {word_count:.2f}')
-        print(f'Accuracy: {accuracy:.2f}%')
-        print(f'Words per Minute: {WPM}')
+        print(f'Time taken: {results[0]} seconds')
+        print(f'Characters typed: {results[1]}')
+        print(f'Estimated words: {results[2]:.2f}')
+        print(f'Accuracy: {results[3]:.2f}%')
+        print(f'Words per Minute: {results[4]}')
 
         again = input("Would you like another quote? (y/n): ").strip().lower()
         if again != 'y':
             print("Thank you for playing, and see you next time!")
-            break 
 
 
 if __name__ == '__main__':
