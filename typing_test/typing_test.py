@@ -10,7 +10,7 @@ def load_quotes(filename):
     abs_file = os.path.join(base_dir, 'quotes.json')
 
     try:
-        with open(abs_file, 'r') as file:
+        with open(abs_file, encoding="utf-8") as file:
             return json.load(file)
         
     except FileNotFoundError:
