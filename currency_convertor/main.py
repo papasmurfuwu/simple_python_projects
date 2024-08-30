@@ -1,17 +1,28 @@
-import requests, json 
-from config import api_key
-
-def get_data(currency):
-    url = f'https://v6.exchangerate-api.com/v6/{api_key}/latest/{currency}'
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = json.loads(response.text)
-
-    else:
-        print("Error: ", response.status_code)
-        return None
+from functions import *  
     
+def main():
+    continue_loop = True
+    choice = str 
 
+    print("Welcome to the Python Currency Exchange!")      
+    while continue_loop: 
+        print("""Please select an option (a/ b):
+        a. Find Currency Code
+        b. Exchange Currency""")
 
-# Have soup scrape in parallel such will not hinder main service
-# User interface (tkinter or sth) 
+        user_choice = input('a/ b: ').strip().lower()
+        print('')
+        if user_choice == 'a':
+            print(search_currency())
+        elif user_choice == 'b':
+            print(exchange())
+        else:
+            print('Please enter valid characters!')
+        
+        again = input("Would you like to use this program again? (y/n): ")
+        continue_loop = True if again in ['y', 'yes']  else False
+        
+    print('\nThanks for using the Python Currency Exchange and see you next time!')
+
+if __name__ == '__main__':
+    main()
