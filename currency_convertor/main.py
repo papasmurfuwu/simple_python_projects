@@ -11,9 +11,7 @@ def get_data(currency):
         print("Error: ", response.status_code)
         return None
     
-def search_currency(query):
-    query = query.strip().lower()
-    
+
 
 # Have soup scrape in parallel such will not hinder main service
 # User interface (tkinter or sth) 

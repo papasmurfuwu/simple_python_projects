@@ -22,7 +22,25 @@ def scrape_countries():
         }
         currencies_ls.append(currency_info)
     
-    
-# If user donese't know currency code, allow them to use Country to search for code
+    return currencies_ls
 
-scrape_countries()
+
+def search_currency(query):
+    query_a = query.strip()
+    print(query)
+    if not query_a or query_a.isdigit():
+        return "Please enter a valid string."
+    
+    query = query.lower()
+
+    for currency in scrape_countries():
+        if query == currency['Country'].lower() or \
+           query == currency['Currency Name'].lower() or \
+           query == currency['Currency Code'].lower(): 
+            return f"{currency['Currency Code']} ({currency['Currency Name']}), is the currency code for {currency['Country']}."
+    return f"No existing country code for input country..."
+        
+user_input = input("Please enter the Currency Code, Currency Name or Country: ")
+print(search_currency(user_input))
+
+
