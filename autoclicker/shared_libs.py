@@ -5,9 +5,9 @@ from pynput import mouse
 
 
 class App(customtkinter.CTk):
-    pause = pyautogui.PAUSE = 1
     def __init__(self):
         super().__init__()
+        self.pause = pyautogui.PAUSE = 1
 
         self.title('Auto Clicker 1.0')
         self.minsize(400,200)
@@ -66,15 +66,16 @@ class App(customtkinter.CTk):
         return False
     
 
-    def update_pause(self):
-        h = float(self.input1.get()) * 3600  
-        m = float(self.input2.get()) * 60     
-        s = float(self.input3.get())           
-        ms = float(self.input4.get()) / 1000   
+    def find_pause(self):
+        # Get input values and convert to float, treating empty inputs as 0
+        h = float(self.input1.get()) if self.input1.get() else 0.0
+        m = float(self.input2.get()) if self.input2.get() else 0.0
+        s = float(self.input3.get()) if self.input3.get() else 0.0
+        ms = float(self.input4.get()) / 1000 if self.input4.get() else 0.0
 
-        pause = h + m + s + ms
-        print(f'Pause has been updated to {pause} seconds!')
-        return pause 
+        # Calculate total pause in seconds
+        pause = (h * 3600) + (m * 60) + s + ms
+        return pause
 
 
     def autoclick(self):
@@ -83,6 +84,10 @@ class App(customtkinter.CTk):
             
 
     def start_callback(self):
+        self.pause = self.find_pause()
+        pyautogui.PAUSE = self.pause
+        
+        print(f'Pause set to: {self.pause} seconds')
         print(f'Autoclicker activated!')
         self.start_button.configure(state=DISABLED)
         self.stop_button.configure(state=NORMAL)
