@@ -1,35 +1,7 @@
 # Contains imported libraries and functions
-import pyautogui, threading, time, customtkinter
+import pyautogui, threading, time, customtkinter, keyboard
 from tkinter import * 
 from pynput import mouse
-
-
-running = True 
-pyautogui.PAUSE = 0.01 # Lower this for less delay (faster clicks)
-
-def on_click(x, y, button, pressed):
-    global running                                                                                                                                                                                 
-    if pressed and (button == mouse.Button.left): # Check for pressed left click                                                                                    
-        if on_click.last_click_time and (time.time() - on_click.last_click_time) < 0.25:     
-            print("Double click detected! Terminating script.")
-            running = False
-        on_click.last_click_time = time.time()
-
-def autospace(): 
-    # Initialize last click time
-    on_click.last_click_time = None             
-
-    # Start listening to mouse events
-    listener = mouse.Listener(on_click=on_click)
-    listener.start()
-
-    # Main script loop
-    # pyautogui.moveTo(1920, 720)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-    while running:
-        pyautogui.press(' ') # press spacebar 
-            
-    listener.stop()
-    print("Script terminated.")
 
 
 class App(customtkinter.CTk):
@@ -45,20 +17,29 @@ class App(customtkinter.CTk):
         
         # Label "Click Interval"
 
-        self.start_button = customtkinter.CTkButton(self, text='Start', command=self.autoclick_callback)
+        self.start_button = customtkinter.CTkButton(self, text='Start (Shift+C)', command=self.start_callback)
         self.start_button.grid(row=0, column=0, padx=20, pady=20, sticky='ew')
 
-        self.stop_button = customtkinter.CTkButton(self, text='Stop', command=self.stop_callback)
+        self.stop_button = customtkinter.CTkButton(self, text='Stop (Shift+C)', command=self.stop_callback)
         self.stop_button.grid(row=0, column=1, padx=20, pady=20, sticky='ew')
-        
-        self.bind('<C>', self.shift_c_pressed)
+        self.stop_button['state'] = 'disabled'
+
+        keyboard.add_hotkey('shift+c', self.toggle_autoclicker)
         self.start = False
 
-    def autoclick_callback(self):
+
+    def autoclick(self):
+        while self.start:
+            pyautogui.click(interval=0.00001)
+            
+
+    def start_callback(self):
         print(f'Autoclicker activated!')
         self.start_button.configure(state=DISABLED)
         self.stop_button.configure(state=NORMAL)
         self.start = True
+        threading.Thread(target=self.autoclick, daemon=True).start()
+
 
     def stop_callback(self):
         print('Autoclicker turned off...')
@@ -66,20 +47,13 @@ class App(customtkinter.CTk):
         self.stop_button.configure(state=DISABLED)
         self.start = False
 
-    def shift_c_pressed(self, event):
+
+    def toggle_autoclicker(self):
         if not self.start:
-            self.autoclick_callback()
-            
+            self.start_callback() 
         else:
             self.stop_callback()
             
-
-
-
-    
-    
-   
-
 
 if __name__ == '__main__':
     app = App()
