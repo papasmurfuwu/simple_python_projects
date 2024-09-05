@@ -1,7 +1,11 @@
 import pyautogui, threading, customtkinter, keyboard, time
+from CTkMessagebox import CTkMessagebox
 from tkinter import * 
 from pynput import mouse
 
+# Functions to add: 
+# 1. Button for user to change hotkey 
+# 2
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -9,7 +13,8 @@ class App(customtkinter.CTk):
         self.pause = pyautogui.PAUSE = 1
 
         self.title('Auto Clicker 1.0')
-        self.minsize(400,200)
+        self.minsize(450, 200)
+        self.CenterWindow(450,200)
 
         # Configure grid columns to have equal weight
         self.grid_columnconfigure(0, weight=1)
@@ -27,24 +32,24 @@ class App(customtkinter.CTk):
 
         # First row: User click interval input 
         self.input1 = customtkinter.CTkEntry(self, placeholder_text="0", justify="right", width=50, corner_radius=0, font=label_font, validate="key", validatecommand=(self.vcmd, '%P'))
-        self.input1.grid(row=0, column=0, padx=(5, 0), pady=5)
+        self.input1.grid(row=0, column=0, padx=(5, 0), pady=15)
         self.label1 = customtkinter.CTkLabel(self, text="Hours", font=label_font)
-        self.label1.grid(row=0, column=1, padx=(5, 5), pady=5)
+        self.label1.grid(row=0, column=1, padx=(5, 5), pady=15)
 
         self.input2 = customtkinter.CTkEntry(self, placeholder_text="0", justify="right", width=50, corner_radius=0, font=label_font, validate="key", validatecommand=(self.vcmd, '%P'))
-        self.input2.grid(row=0, column=2, padx=(10, 0), pady=5)
+        self.input2.grid(row=0, column=2, padx=(10, 0), pady=15)
         self.label2 = customtkinter.CTkLabel(self, text="Minutes", font=label_font)
-        self.label2.grid(row=0, column=3, padx=(5, 5), pady=5)
+        self.label2.grid(row=0, column=3, padx=(5, 5), pady=15)
 
         self.input3 = customtkinter.CTkEntry(self, placeholder_text="0", justify="right", width=50, corner_radius=0, font=label_font, validate="key", validatecommand=(self.vcmd, '%P'))
-        self.input3.grid(row=0, column=4, padx=(10, 0), pady=5)
+        self.input3.grid(row=0, column=4, padx=(10, 0), pady=15)
         self.label3 = customtkinter.CTkLabel(self, text="Seconds", font=label_font)
-        self.label3.grid(row=0, column=5, padx=(5, 5), pady=5)
+        self.label3.grid(row=0, column=5, padx=(5, 5), pady=15)
 
         self.input4 = customtkinter.CTkEntry(self, placeholder_text="0", justify="right", width=50, corner_radius=0, font=label_font, validate="key", validatecommand=(self.vcmd, '%P'))
-        self.input4.grid(row=0, column=6, padx=(10, 0), pady=5)
+        self.input4.grid(row=0, column=6, padx=(10, 0), pady=15)
         self.label4 = customtkinter.CTkLabel(self, text="Milliseconds", font=label_font)
-        self.label4.grid(row=0, column=7, padx=(5, 5), pady=5)
+        self.label4.grid(row=0, column=7, padx=(5, 5), pady=15)
         
 
         # Second row: Start & End buttons
@@ -58,10 +63,19 @@ class App(customtkinter.CTk):
         keyboard.add_hotkey('shift+c', self.toggle_autoclicker) # Adding hotkey enables global detection 
         self.start = False
 
-        
+    
+    def CenterWindow(self, width: int, height: int, scale_factor: float=1.0):
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = int(((screen_width/ 2) - (width/2)) * scale_factor)
+        y = int(((screen_height/ 2) - (height/2)) * scale_factor)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+
+
     def validate_input(self, P):
         if P == '' or (P.isdigit() and len(P) <= 6):
             return True
+        CTkMessagebox(title="Unacceptable Character", icon='cancel', message="You can only type a number here.")
         return False
     
 
